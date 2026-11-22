@@ -7,7 +7,11 @@
 
 ## 1. 개발 환경 구성
 
-![환경별 개발 워크플로](evidence/environment-workflow.png)
+![Dockerfile·이미지·컨테이너 개념을 포함한 개발 환경 구성도](evidence/environment-workflow-docker-concepts.png)
+
+> 위 구성도는 Windows → WSL2 Ubuntu → Docker 개발 환경의 연결 관계와 `Dockerfile → docker build → Docker Image → docker run → Container` 흐름을 설명한다. 아래의 기존 구성도는 환경별 역할을 보완하는 참고 자료다.
+
+![기존 환경별 개발 워크플로](evidence/environment-workflow.png)
 
 ![개발 환경 구성도 및 역할](evidence/environment-architecture.png)
 
@@ -141,7 +145,40 @@ $ docker run -d -p 8080:80 --name my-web nginx
 
 **중요한 구분:** 위 증거는 **기존 `nginx` 이미지의 실행·포트 매핑 성공**을 입증한다. `Dockerfile`을 직접 작성하고 `docker build`로 커스텀 이미지를 제작했다는 증거는 아니다. 또한 HTML 파일 생성은 확인되지만 Bind Mount로 연결했다는 실행 명령은 확인되지 않았다.
 
-## 6. 미완료 검증: Dockerfile · Bind Mount · Volume
+## 6. Dockerfile · Docker Image · Docker Container 개념과 검증 계획
+
+### 6.1 세 개념의 차이
+
+| 구분 | 정의 | 이번 미션의 예시 |
+|---|---|---|
+| **Dockerfile** | Docker 이미지를 어떤 순서와 설정으로 만들지 기록한 **텍스트 기반 제작 지시서** | `FROM nginx:alpine`, `COPY site/ ...`, `EXPOSE 80` |
+| **Docker Image** | 프로그램·라이브러리·설정·파일 등 실행에 필요한 내용을 묶은 **읽기 전용 실행 패키지** | `codyssey-web:1.0` (빌드 예정) |
+| **Docker Container** | 이미지를 바탕으로 생성되어 실행되는 **격리된 실행 인스턴스** | `codyssey-web` 컨테이너 (실행 예정) |
+
+**핵심 흐름:** `Dockerfile` — `docker build` → `Docker Image` — `docker run` → `Docker Container`.
+
+Dockerfile은 이미지 그 자체가 아니며, 이미지는 JPG/PNG와 같은 그림 파일이 아니다. 하나의 이미지로 여러 컨테이너를 만들 수 있고, 컨테이너에서 변경한 데이터는 별도 볼륨이나 바인드 마운트로 관리하지 않으면 컨테이너 삭제 시 사라질 수 있다.
+
+### 6.2 Dockerfile 예제 (실습 예정, 실행 증거 아님)
+
+```dockerfile
+FROM nginx:alpine
+COPY site/ /usr/share/nginx/html/
+EXPOSE 80
+```
+
+- `FROM`: NGINX가 포함된 베이스 이미지 지정
+- `COPY`: 호스트의 `site/` 내용을 이미지의 웹 문서 경로로 복사
+- `EXPOSE`: 컨테이너의 80번 포트 사용을 문서화하며, 호스트 포트 공개는 `docker run -p`에서 별도 설정
+
+```bash
+# 아래는 실행 예정 명령이며, 아직 성공 여부가 검증되지 않음
+docker build -t codyssey-web:1.0 .
+docker run -d --name codyssey-web -p 8083:80 codyssey-web:1.0
+curl http://localhost:8083
+```
+
+### 6.3 Bind Mount · Volume 검증 기준
 
 이 절은 실제 완료 사실이 아니라 **다음 수행 단계의 검증 기준**이다.
 
