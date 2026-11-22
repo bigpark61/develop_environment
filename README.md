@@ -1,317 +1,269 @@
-# AIO_E1-1 | 내 컴퓨터에 개발자용 작업실 꾸미기
+# AIO E1-1 | 내 컴퓨터에 개발자용 작업실 꾸미기
 
-## 1. 프로젝트 개요
+> **미션:** Linux CLI · 파일 권한 · Docker · Dockerfile · 포트 매핑 · Bind Mount · Docker Volume · Git/GitHub를 이용한 재현 가능한 개발 워크스테이션 구축  
+> **수행 기간:** 2026년 11월 (제공 로그 기준)  
+> **제출 저장소:** https://github.com/bigpark61/develop_environment  
+> **문서 상태:** 제공된 로그·캡처를 반영한 중간 검증본. 미확인 항목은 완료로 표시하지 않음.
 
-Linux CLI, 파일 권한, Docker, Dockerfile, 포트 매핑, Bind Mount, Docker Volume, Git/GitHub를 실습하여 재현 가능한 개발 환경을 구축합니다. 실행 명령과 **실제 출력**, 웹 접속 화면, 데이터 영속성 검증 및 문제 해결 과정을 기록합니다.
+## 1. 개발 환경 구성
 
-- 수행자: [박경부]
-- 수행일: [2026.11월]
-- GitHub 저장소: [(https://github.com/bigpark61/develop_environment)]
-- 실행 환경: [Ubuntu Linux / Windows WSL2 ]
+![환경별 개발 워크플로](evidence/environment-workflow.png)
 
-## 2. 실행 환경
+![개발 환경 구성도 및 역할](evidence/environment-architecture.png)
 
-| 항목               | 실제 환경/버전                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| HOST OS          | 에디션	Windows 11 Home<br>버전	25H2<br>설치 날짜	‎2025-‎10-‎15<br>OS 빌드	26200.9711<br>기능 팩	Windows 기능 경험 팩 1000.26100.372.0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| Shell / Terminal | Linux DESKTOP-VKSPJC7 6.18.58.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Tue Oct 27 00:24:11 UTC 2026 x86_64 GNU/Linux<br><br>Linux OS : Ubuntu 26.04.1 LTS <br>- Ubuntu Release :26.04 <br>- Ubuntu Codename : resolute <br>-Linux 실행 환경 :WSL (버전 확인 필요) \|<br>-Shell : Bash                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| VS Code          | Version: 1.139.1 (system setup)<br>Commit: 04c0d99f4fb0d8afe6ce4f0c58e31e183ac3e4b1<br>Date: 2026-09-25T03:40:57Z<br>Electron: 43.6.0<br>ElectronBuildId: 15274685<br>Chromium: 150.0.7871.250<br>Node.js: 24.20.0<br>V8: 15.0.245.31-electron.0<br>@github/copilot: 1.0.85.r35379093703.g3514c9a<br>@github/copilot-sdk: 1.0.15.35393089353.gfc44743<br>OS: Windows_NT x64 10.0.26200                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| Docker           | Docker version 29.9.2, build a82e528<br><br>bigpark61@DESKTOP-VKSPJC7:~$ docker info<br>Client:<br> Version:    29.9.2<br> Context:    default<br> Debug Mode: false<br> Plugins:<br>  agent: Docker AI Agent Runner (Docker Inc.)<br>    Version:  v1.152.0<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-agent<br>  ai: Docker AI Agent - Ask Gordon (Docker Inc.)<br>    Version:  v1.33.0<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-ai<br>  buildx: Docker Buildx (Docker Inc.)<br>    Version:  v0.38.1<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-buildx<br>  compose: Docker Compose (Docker Inc.)<br>    Version:  v5.6.1<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-compose<br>  debug: Get a shell into any image or container (Docker Inc.)<br>    Version:  0.49.0<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-debug<br>  desktop: Docker Desktop commands (Docker Inc.)<br>    Version:  4.98.0<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-desktop<br>  dhi: CLI for managing Docker Hardened Images (Docker Inc.)<br>    Version:  v0.0.9<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-dhi<br>  extension: Manages Docker extensions (Docker Inc.)<br>    Version:  v0.2.32<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-extension<br>  init: Creates Docker-related starter files for your project (Docker Inc.)<br>    Version:  v1.4.1<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-init<br>  mcp: Docker MCP Plugin (Docker Inc.)<br>    Version:  v0.44.2<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-mcp<br>  model: Docker Model Runner (Docker Inc.)<br>    Version:  v1.2.9<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-model<br>  offload: Docker Offload (Docker Inc.)<br>    Version:  v0.7.35<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-offload<br>  pass: Docker Pass Secrets Manager Plugin (beta) (Docker Inc.)<br>    Version:  v0.3.2<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-pass<br>  sandbox: "docker sandbox" is deprecated, use Docker Sandboxes instead (Docker Inc.)<br>    Version:  v0.13.0<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-sandbox<br>  scout: Docker Scout (Docker Inc.)<br>    Version:  v1.27.0<br>    Path:     /usr/local/lib/docker/cli-plugins/docker-scout<br><br>Server:<br> Containers: 10<br>  Running: 1<br>  Paused: 0<br>  Stopped: 9<br> Images: 3<br> Server Version: 29.9.2<br> Storage Driver: overlayfs<br>  driver-type: io.containerd.snapshotter.v1<br> Logging Driver: local<br> Cgroup Driver: cgroupfs<br> Cgroup Version: 2<br> Plugins:<br>  Volume: local<br>  Network: bridge host ipvlan macvlan null overlay<br>  Log: awslogs fluentd gcplogs gelf journald json-file local splunk syslog<br> CDI spec directories:<br>  /etc/cdi<br>  /var/run/cdi<br> Discovered Devices:<br>  cdi: docker.com/gpu=webgpu<br> Swarm: inactive<br> Runtimes: io.containerd.runc.v2 nvidia runc<br> Default Runtime: runc<br> Init Binary: docker-init<br> containerd version: b7a25261e029d68978bbf290df0a62fc819b3c51<br> runc version: v1.5.2-0-g29dd3dc2<br> init version: de40ad0<br> Security Options:<br>  seccomp<br>   Profile: builtin<br>  cgroupns<br> Kernel Version: 6.18.58.1-microsoft-standard-WSL2<br> Operating System: Docker Desktop<br> OSType: linux<br> Architecture: x86_64<br> CPUs: 8<br> Total Memory: 3.685GiB<br> Name: docker-desktop<br> ID: 1f990b51-ee06-4d81-9f6c-26b4d40195d2<br> Docker Root Dir: /var/lib/docker<br> Debug Mode: false<br> HTTP Proxy: http.docker.internal:3128<br> HTTPS Proxy: http.docker.internal:3128<br> No Proxy: hubproxy.docker.internal<br> Labels:<br>  com.docker.desktop.address=unix:///var/run/docker-cli.sock<br> Experimental: false<br> Insecure Registries:<br>  hubproxy.docker.internal:5555<br>  127.0.0.0/8<br>  ::1/128<br> Live Restore Enabled: false<br> Firewall Backend: iptables |
-| Git              | git version 2.53.0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| Docker 엔진        | Docker Desktop                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-[확인 명령어]
-```bash
-uname -a
-docker --version
-docker info
-git --version
-code --version
-```
+| 구성 요소 | 확인된 환경 | 역할 |
+|---|---|---|
+| 호스트 OS | Windows 11 Home 25H2, 빌드 26200.9711 | PC 및 Docker Desktop 운영 |
+| Linux | WSL2 기반 Ubuntu 26.04.1 LTS, Bash | CLI·Git·Docker 명령 실행 |
+| Docker | CLI/Server 29.9.2, Docker Desktop 4.98.0 | 이미지 및 컨테이너 관리 |
+| Git | Ubuntu 2.53.0 (Windows 2.52.0.windows.1) | 로컬 버전 관리 |
+| VSCode | 1.139.1 | WSL 개발 작업 |
+| Python (추가 실습) | 3.14.4 / pip 25.1.1 | 가상환경 실습 (미션 필수 아님) |
 
-## 3. 수행 항목 체크리스트
-
-> 완료한 항목만 `[x]`로 변경합니다.
-
-- [ ] 터미널에서 파일 및 디렉터리 생성·이동·복사·삭제
-- [ ] 파일과 디렉터리 권한 변경 전후 비교
-- [ ] Docker 설치 및 엔진 동작 확인
-- [ ] Docker 이미지·컨테이너·로그·자원 사용량 확인
-- [ ] `hello-world`와 `ubuntu` 실행
-- [ ] Dockerfile을 활용한 커스텀 웹 서버 이미지 빌드
-- [ ] 포트 매핑 및 브라우저 접속 확인
-- [ ] Bind Mount의 실시간 파일 변경 반영 확인
-- [ ] Docker Volume의 데이터 영속성 확인
-- [ ] Git 설정·GitHub Push·VS Code 연동 확인
-- [ ] 트러블슈팅 2건 이상 기록
-
-## 4. Linux CLI 실습
-
-### 4.1 파일 및 디렉터리 조작
+> 참고: Windows CMD에서 실행한 초기 `docker info`는 엔진 연결에 실패했으나, 이후 Ubuntu에서 실행한 `docker info`는 `Server Version: 29.9.2`를 반환했다. 시점별 상태가 다르므로 초기 오류를 현재의 장애로 단정하지 않는다. `wsl --list --verbose` 출력은 별도 확인이 필요하다.
 
 ```bash
-pwd
-mkdir -p ~/codyssey/practice
-cd ~/codyssey/practice
-touch test.txt
-echo "Hello Codyssey" > test.txt
-cat test.txt
-ls -la
-cp test.txt copy.txt
-mv copy.txt renamed.txt
-mkdir sample_dir
-mv renamed.txt sample_dir/
-ls -la sample_dir
-rm sample_dir/renamed.txt
+# Ubuntu에서 실제 실행·확인한 명령
+$ git --version
+ git version 2.53.0
+$ docker --version
+ Docker version 29.9.2, build a82e528
+$ docker info
+ Server:
+  Server Version: 29.9.2
+  Operating System: Docker Desktop
+$ code --version
+ 1.139.1
 ```
 
-**실제 출력 및 관찰 결과:**
+**WSL 통합 설정 캡처**  
+![Docker Desktop WSL integration](evidence/docker-wsl-integration.png)
 
-```text
-[현재 위치, ls -la, cat 출력 및 파일 이동·삭제 확인 결과 붙여넣기]
-```
+## 2. 필수 수행 체크리스트
 
-### 4.2 파일·디렉터리 권한 변경
+- [x] Linux CLI: 경로 확인, 생성, 목록, 복사, 이름변경, 삭제, 파일 내용 확인
+- [ ] 파일·디렉터리 **각각** 권한 변경 전후 비교 (파일 권한 결과만 일부 확인)
+- [x] Docker CLI/엔진 버전 및 연결 확인
+- [ ] Docker 운영 명령 전부 (`docker stats` 성공 출력 추가 필요)
+- [x] `hello-world` 실행 및 Ubuntu 컨테이너 진입
+- [ ] **직접 작성한 Dockerfile**로 커스텀 이미지 빌드·실행
+- [x] NGINX 기본 이미지 포트 매핑 및 브라우저 접속
+- [ ] Bind Mount: 호스트 파일 수정 전후 컨테이너 반영 비교
+- [ ] Docker Volume: 컨테이너 삭제 전후 데이터 유지 검증
+- [x] Git 사용자·기본 브랜치 설정, GitHub CLI 인증, VSCode WSL에서 저장소 열기
+- [ ] 과제 제출 저장소 `develop_environment`에 최신 결과 Push 확인
+- [x] 실제 트러블슈팅 사례 2건 이상 기록 (해결·재검증 여부 구분)
+
+## 3. Linux CLI 실습 기록
+
+`Logs_01.md`에서 확인한 작업 위치: `/home/bigpark61/codyssey/practice`
 
 ```bash
-ls -l test.txt
-ls -ld sample_dir
-chmod 600 test.txt
-chmod 700 sample_dir
-ls -l test.txt
-ls -ld sample_dir
+$ pwd
+/home/bigpark61
+$ mkdir -p ~/codyssey
+$ cd ~/codyssey
+$ mkdir practice
+$ cd practice
+$ touch test.txt
+$ echo "Hello Codyssey" > test.txt
+$ cat test.txt
+Hello Codyssey
+$ cp test.txt copy.txt
+$ mv copy.txt result.txt
+$ ls -la
+# test.txt, result.txt 목록 확인
+$ rm result.txt
 ```
 
-| 대상 | 변경 전 | 변경 후 | 의미 |
-|---|---|---|---|
-| `test.txt` | [실제 값] | [실제 값] | 소유자 읽기·쓰기만 허용 (`600`) |
-| `sample_dir` | [실제 값] | [실제 값] | 소유자만 접근 가능 (`700`) |
+- **절대 경로:** `/home/bigpark61/codyssey/practice`처럼 루트(`/`)부터 위치를 표현한다.
+- **상대 경로:** 현재 위치에서 `practice`, `../`처럼 표현한다.
+- **숨김 파일:** `ls -la`로 확인한다.
+- **권한:** `r` 읽기(4), `w` 쓰기(2), `x` 실행/디렉터리 진입(1). `755`는 소유자 `rwx`, 그룹·기타 `r-x`; `644`는 소유자 `rw-`, 그룹·기타 `r--`이다.
 
-**실제 출력:**
+실제 로그에서 `test.txt`의 초기 권한 `-rw-r--r--`와 후속 권한 `-rwxr-xr-x`가 확인된다. **변경에 사용한 `chmod` 명령 및 디렉터리 권한 변경 전후는 제출 자료에서 확인되지 않아 보완이 필요하다.**
 
-```text
-[ls -l / ls -ld 변경 전후 출력 붙여넣기]
-```
+[CLI 및 환경 점검 원본 로그](evidence/Logs_01.md)
 
-## 5. Docker 기본 점검 및 운영
+## 4. Docker 설치 및 컨테이너 검증
 
-### 5.1 이미지·컨테이너 실행
+### 4.1 Docker Engine 동작
+
+Ubuntu의 `docker info`에서 Docker Desktop 서버 연결 성공을 확인했다. 최초 Windows CMD 출력의 Docker API 연결 실패는 이후 정상 연결 기록과 구분한다.
+
+### 4.2 hello-world 성공
 
 ```bash
-docker run --name hello-test hello-world
-docker run -it --name ubuntu-test ubuntu bash
-# Ubuntu 컨테이너 내부에서:
-pwd
-ls
-echo "Hello from Ubuntu"
-exit
+$ docker run hello-world
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
 ```
 
-**실제 출력:**
-
-```text
-[hello-world 성공 메시지와 Ubuntu 내부 명령 출력 붙여넣기]
-```
-
-### 5.2 운영 명령
+### 4.3 Ubuntu 컨테이너 내부 진입
 
 ```bash
-docker images
-docker ps
-docker ps -a
-docker logs hello-test
-docker stats --no-stream
-docker start ubuntu-test
-docker stop ubuntu-test
+$ docker run -it ubuntu bash
+root@...:/# dir
+root@...:/# dir -ls
 ```
 
-**실제 출력:**
+실행 캡처 14~15페이지에서 Ubuntu 컨테이너 진입 및 내부 목록 출력을 확인했다. `docker run`은 이미지로 새 컨테이너를 생성하며, `docker exec`는 실행 중인 기존 컨테이너에 명령을 수행한다. 메인 프로세스가 종료되면 컨테이너도 종료될 수 있다.
 
-```text
-[이미지 목록, 컨테이너 상태, 로그, 자원 사용량 출력 붙여넣기]
-```
-
-**관찰:** `docker run -it`은 새 컨테이너를 만들고 터미널을 연결합니다. `docker exec -it <실행중인_컨테이너> bash`는 실행 중인 기존 컨테이너 안에 추가 셸을 엽니다. `exit` 시 메인 프로세스가 끝나면 컨테이너가 종료될 수 있습니다.
-
-## 6. Dockerfile로 커스텀 웹 서버 제작
-
-### 6.1 프로젝트 구조
-
-```text
-.
-├── Dockerfile
-├── README.md
-├── site/
-│   └── index.html
-└── evidence/
-    ├── docker-build.txt
-    ├── docker-operations.txt
-    ├── web-8080.png
-    ├── bind-mount.png
-    └── volume-check.txt
-```
-
-### 6.2 사용한 베이스 이미지 및 커스텀 내용
-
-- **베이스 이미지:** `nginx:alpine` — 경량 NGINX 웹 서버
-- **커스텀 포인트:** 기본 정적 페이지 대신 `site/index.html` 복사
-- **목적:** 동일한 웹 콘텐츠를 이미지로 빌드하고 독립적으로 실행
-
-**Dockerfile**
-
-```dockerfile
-FROM nginx:alpine
-COPY site/ /usr/share/nginx/html/
-EXPOSE 80
-```
-
-**site/index.html**
-
-```html
-<!DOCTYPE html>
-<html lang="ko">
-<head><meta charset="UTF-8"><title>Codyssey Web</title></head>
-<body><h1>Hello Codyssey!</h1><p>Docker custom image test</p></body>
-</html>
-```
-
-### 6.3 빌드·실행·포트 매핑
+### 4.4 이미지·컨테이너 확인
 
 ```bash
-docker build -t codyssey-web:1.0 .
-docker run -d --name codyssey-web -p 8080:80 codyssey-web:1.0
-docker ps
-docker logs codyssey-web
-curl http://localhost:8080
+$ docker images
+# hello-world:latest, ubuntu:latest 확인
+$ docker ps -a
+# 종료된 hello-world 및 ubuntu-test 컨테이너 목록 확인
 ```
 
-- 브라우저 접속: `http://localhost:8080`
-- 포트 매핑 의미: **호스트 8080 → 컨테이너 80**
-- 접속 결과: [성공/실패 및 확인 내용 직접 입력]
-- 실행 증빙: [웹 접속 화면](evidence/web-8080.png) (스크린샷 첨부 후 확인)
-- 빌드 로그: [docker-build.txt](evidence/docker-build.txt) (실제 로그 첨부 후 확인)
+`docker logs`와 `docker stats --no-stream`의 **정상 실행 출력은 추가 증빙 필요**.
 
-**실제 핵심 출력:**
+![Docker hello-world와 NGINX 실행](evidence/docker-hello-nginx.png)
 
-```text
-[빌드 완료 메시지, docker ps의 PORTS 열, curl 응답 붙여넣기]
-```
+## 5. NGINX 웹 서버와 포트 매핑
 
-## 7. Bind Mount 검증
-
-호스트의 `site/index.html`을 컨테이너의 NGINX 웹 루트에 연결합니다.
+실행 캡처에서 기본 NGINX 이미지를 이용한 웹 서버 실행을 확인했다.
 
 ```bash
-docker run -d --name bind-web -p 8082:80 \
-  -v "$(pwd)/site:/usr/share/nginx/html:ro" nginx:alpine
-curl http://localhost:8082
-# 호스트에서 site/index.html 문구를 수정한 뒤 다시 확인
-curl http://localhost:8082
+$ docker run -d -p 8080:80 --name my-web nginx
+# 컨테이너 ID 출력
 ```
 
-- 검증 주소: `http://localhost:8082`
-- 변경 전 문구: [직접 입력]
-- 변경 후 문구: [직접 입력]
-- 관찰 결과: [호스트 파일 수정이 새 이미지 빌드 없이 반영되었는지 입력]
-- 증빙: [bind-mount.png](evidence/bind-mount.png)
+![localhost 8080 접속 성공](evidence/nginx-8080.png)
 
-**실제 출력:**
+또한 `8081:80` 매핑으로 HTML 페이지의 `안녕하세요! Docker Nginx 연결 성공입니다!` 문구가 브라우저에 표시된 것을 확인했다.
 
-```text
-[수정 전후 curl 응답 붙여넣기]
-```
+![localhost 8081 접속 성공](evidence/nginx-8081-ubuntu.png)
 
-## 8. Docker Volume 영속성 검증
+**원리:** `-p 8080:80`은 호스트의 8080 포트를 컨테이너 내부 NGINX의 80 포트에 연결한다.
+
+**중요한 구분:** 위 증거는 **기존 `nginx` 이미지의 실행·포트 매핑 성공**을 입증한다. `Dockerfile`을 직접 작성하고 `docker build`로 커스텀 이미지를 제작했다는 증거는 아니다. 또한 HTML 파일 생성은 확인되지만 Bind Mount로 연결했다는 실행 명령은 확인되지 않았다.
+
+## 6. 미완료 검증: Dockerfile · Bind Mount · Volume
+
+이 절은 실제 완료 사실이 아니라 **다음 수행 단계의 검증 기준**이다.
+
+| 항목 | 확인할 내용 | 현재 상태 |
+|---|---|---|
+| Dockerfile | 베이스 이미지 선택, 커스텀 파일 복사, `docker build` 성공 로그 | 미확인 |
+| Bind Mount | `-v 호스트경로:컨테이너경로` 연결 후 호스트 파일 수정 전/후 `curl` 비교 | 미확인 |
+| Docker Volume | 볼륨 생성·쓰기 → 컨테이너 삭제 → 새 컨테이너에서 파일 읽기 | 미확인 |
+
+완료 후 이 절에 실제 실행 명령·출력·스크린샷을 추가한다. 예상 결과를 실제 수행 결과처럼 기재하지 않는다.
+
+## 7. Git · GitHub · VSCode 연동
+
+Ubuntu에서 확인된 설정:
 
 ```bash
-docker volume create codyssey-data
-docker run --name volume-write -v codyssey-data:/data ubuntu \
-  sh -c 'echo persistent-data > /data/test.txt && cat /data/test.txt'
-docker rm volume-write
-docker run --rm -v codyssey-data:/data ubuntu cat /data/test.txt
-docker volume inspect codyssey-data
+$ git config --global --list
+user.name=Kyoungboo
+# user.email 설정 확인됨 (공개 README에는 이메일 생략)
+init.defaultbranch=main
 ```
 
-- 예상 검증 기준: 새 컨테이너에서도 `persistent-data`가 출력되어야 함
-- 실제 결과: [직접 입력]
-- 증빙: [volume-check.txt](evidence/volume-check.txt)
+- `gh auth login`으로 GitHub CLI 인증 성공 및 `bigpark61` 계정 로그인 확인
+- `git clone https://github.com/bigpark61/AI_DevCoach` 성공
+- `code .` 명령으로 WSL 환경의 VSCode에서 복제 저장소 열기 성공
+- GitLens, GitHub Pull Requests, Python 확장 설치 기록 확인
 
-**실제 출력:**
+![Git 설정 및 저장소 복제](evidence/git-config-clone.png)
 
-```text
-[첫 컨테이너와 재생성 컨테이너의 출력, volume inspect 결과 붙여넣기]
-```
+![VSCode WSL 저장소 화면](evidence/vscode-wsl-repository.png)
 
-**정리:** Bind Mount는 호스트 파일과 직접 연결하여 수정 사항을 반영하고, Docker Volume은 컨테이너를 삭제해도 데이터를 별도로 유지합니다.
+> 주의: `AI_DevCoach` 복제 성공은 GitHub 연동 증거이지만, **이번 과제 제출 저장소 `develop_environment`로 Push 성공했다는 증거는 아니다.** 제출 저장소의 `git remote -v`, `git status`, `git log -1` 및 GitHub 파일 목록을 추가로 확인해야 한다.
 
-## 9. Git / GitHub / VS Code 연동
+## 8. 추가 실습 (미션 필수 외)
+
+`Logs_02.md`에서 Python 가상환경 생성 및 도구 설치를 확인했다.
 
 ```bash
-git config --global user.name "[GitHub 표시 이름]"
-git config --global user.email "[GitHub 이메일]"
-git init
-git branch -M main
-git add .
-git commit -m "docs: add AIO E1-1 workstation assignment"
-git remote add origin https://github.com/USERNAME/REPOSITORY.git
-git push -u origin main
-git status
+$ python3 -m venv .venv
+$ source .venv/bin/activate
+$ pip install ruff
+$ ruff check .
+warning: No Python files found under the given path(s)
+All checks passed!
 ```
 
-> `USERNAME/REPOSITORY`를 실제 저장소로 바꾸고, 비밀번호·토큰·`.env` 파일은 커밋하지 않습니다. 이미 Git 저장소가 있다면 `git init`이나 `git remote add origin`을 중복 실행하지 않습니다.
+이는 검사 대상 Python 파일이 없었다는 의미이며 **실제 Python 코드의 품질 검증 완료를 뜻하지 않는다.** `direnv` 설치 및 `.envrc` 생성·허용도 확인된다.
 
-- GitHub URL: [직접 입력]
-- VS Code에서 저장소 열기 및 Source Control 확인: [확인 결과 입력]
-- 마지막 `git status` 결과: [직접 입력]
+[추가 개발 도구 실습 로그](evidence/Logs_02.md)
 
-```text
-[git status / git remote -v / git log -1 출력 붙여넣기]
-```
+## 9. 트러블슈팅
 
-## 10. 트러블슈팅 (최소 2건)
+### 사례 1. Docker Desktop 엔진 연결 실패 → 이후 연결 성공
 
-> 아래는 **기록 양식**입니다. 실제 발생한 문제만 작성하고, 예시를 본인 경험으로 표시하지 마세요.
+- **문제:** Windows CMD `docker info`에서 `dockerDesktopLinuxEngine` 파이프를 찾지 못해 API 연결 실패.
+- **원인 가설:** 당시 Docker Desktop 엔진 미실행 또는 초기화 미완료.
+- **확인:** Ubuntu에서 `docker info` 재실행.
+- **결과:** `Server Version: 29.9.2`, `Operating System: Docker Desktop` 확인.
+- **해결/대안:** 이후 정상 상태는 입증되지만, 정확히 어떤 조치로 복구되었는지는 로그에서 확인되지 않는다.
 
-### 사례 1 — [실제 오류 제목]
+### 사례 2. 컨테이너 이름 중복 → 기존 컨테이너 제거 후 재실행
 
-- **문제:** [오류 메시지 및 발생 상황]
-- **원인 가설:** [추정 원인]
-- **확인 방법:** `[실제로 실행한 진단 명령]`
-- **확인 결과:** [명령 출력 및 원인 판단]
-- **해결/대안:** [실제로 수행한 조치]
-- **재검증:** [해결 확인 명령 및 결과]
+- **문제:** `--name my-nginx`로 재실행 시 `Conflict. The container name ... is already in use` 오류.
+- **원인:** 동일 이름의 컨테이너가 이미 존재.
+- **확인:** `docker ps`와 오류 메시지 확인.
+- **조치:** `docker rm -f my-nginx` 후 다른 포트(`8081:80`)로 실행.
+- **재검증:** `localhost:8081`에서 사용자 정의 HTML 문구 표시.
 
-### 사례 2 — [실제 오류 제목]
+![컨테이너 이름 충돌과 조치](evidence/docker-name-conflict.png)
 
-- **문제:** [오류 메시지 및 발생 상황]
-- **원인 가설:** [추정 원인]
-- **확인 방법:** `[실제로 실행한 진단 명령]`
-- **확인 결과:** [명령 출력 및 원인 판단]
-- **해결/대안:** [실제로 수행한 조치]
-- **재검증:** [해결 확인 명령 및 결과]
+### 사례 3. Linux 명령어 오타
 
-## 11. 검증 결과 및 증빙 목록
+- **문제:** `cat "Hello Codyssey" > text.txt`에서 `No such file or directory`.
+- **원인:** `cat`은 파일 내용을 읽으므로 문자열을 파일에 쓰려면 `echo` 사용 필요.
+- **조치:** `echo "Hello Codyssey" > test.txt`.
+- **재검증:** `cat test.txt`에서 `Hello Codyssey` 확인.
 
-| 검증 항목 | 확인 명령/방법 | 결과 | 증빙 |
-|---|---|---|---|
-| 터미널 조작 | `pwd`, `ls -la`, `cat` | [입력] | README 4절 |
-| 권한 변경 | `ls -l`, `ls -ld` | [입력] | README 4절 |
-| Docker 엔진 | `docker info` | [입력] | README 2절 |
-| 컨테이너 운영 | `docker ps -a`, `docker logs`, `docker stats` | [입력] | [운영 로그](evidence/docker-operations.txt) |
-| 커스텀 이미지 | `docker build`, `docker images` | [입력] | [빌드 로그](evidence/docker-build.txt) |
-| 웹 접속 | 브라우저 `localhost:8080` | [입력] | [화면](evidence/web-8080.png) |
-| Bind Mount | 파일 수정 전후 `curl` | [입력] | [화면](evidence/bind-mount.png) |
-| Volume | 컨테이너 삭제 후 데이터 재조회 | [입력] | [검증 로그](evidence/volume-check.txt) |
-| GitHub | `git status`, 원격 저장소 확인 | [입력] | [저장소 URL 입력] |
+### 사례 4. GitHub CLI 브라우저 자동 실행 실패
 
-## 12. 학습 결과 및 회고
+- **문제:** WSL에서 `gh auth login` 실행 중 브라우저 실행 프로그램을 찾지 못함.
+- **대안:** Windows 브라우저에서 인증 페이지를 직접 열어 인증.
+- **재검증:** `Authentication complete`, `Logged in as bigpark61` 확인.
+- **보안:** 일회용 인증 코드는 공개 문서에 수록하지 않음.
 
-- **Linux CLI:** [학습한 내용]
-- **Docker 이미지와 컨테이너:** [차이를 설명]
-- **포트 매핑:** [호스트와 컨테이너 포트 관계]
-- **Bind Mount와 Volume:** [실험으로 확인한 차이]
-- **Git/GitHub:** [버전 관리와 원격 저장소 연동 경험]
-- **추가 개선점:** [향후 보완할 내용]
+## 10. 증빙 자료 인덱스
+
+| 항목 | 증빙 |
+|---|---|
+| 환경 구조 | [워크플로](evidence/environment-workflow.png) · [구성도](evidence/environment-architecture.png) |
+| Windows/WSL/Docker 설정 | [WSL 통합](evidence/docker-wsl-integration.png) |
+| CLI·버전·컨테이너 로그 | [Logs_01.md](evidence/Logs_01.md) |
+| Python·VSCode 실습 | [Logs_02.md](evidence/Logs_02.md) |
+| Docker 실행 | [hello-world/NGINX](evidence/docker-hello-nginx.png) |
+| 포트 매핑 | [8080](evidence/nginx-8080.png) · [8081](evidence/nginx-8081-ubuntu.png) |
+| Git/GitHub | [설정/clone](evidence/git-config-clone.png) · [VSCode](evidence/vscode-wsl-repository.png) |
+| 오류 대응 | [컨테이너 이름 충돌](evidence/docker-name-conflict.png) |
+
+## 11. 학습 결과 및 다음 보완 작업
+
+- **Linux CLI:** 현재 위치·경로·파일·권한을 다루는 기본 원리 학습.
+- **Docker:** 이미지(실행 원본)와 컨테이너(실행 인스턴스)를 구분하고 엔진 상태 확인.
+- **포트 매핑:** 호스트 8080/8081과 컨테이너 80의 연결을 브라우저로 검증.
+- **Git/GitHub:** 로컬 버전 관리와 원격 저장소 인증·복제·VSCode 연동 확인.
+- **우선 보완:** 파일·디렉터리 권한 변경, Dockerfile 빌드, Bind Mount, Volume, Docker 운영 로그, 제출 저장소 Push 증빙.
+
+### 최종 요구사항 검증표
+
+| 과제 요구사항 | 구현·증빙 위치 | 상태 |
+|---|---|---|
+| 개발 환경 및 버전 | 1절 / Logs_01 | 확인 |
+| CLI 조작 | 3절 / Logs_01 | 확인 |
+| 권한 변경 전후 | 3절 | 추가 검증 필요 |
+| Docker 엔진·기본 컨테이너 | 4절 / 캡처 | 확인 |
+| Docker 운영 로그 전체 | 4절 | 일부 미확인 |
+| 커스텀 Dockerfile | 6절 | 미확인 |
+| 포트 매핑 | 5절 / 캡처 | 확인 |
+| Bind Mount | 6절 | 미확인 |
+| Volume 영속성 | 6절 | 미확인 |
+| GitHub/VSCode 연동 | 7절 / 캡처 | 확인 |
+| 제출 저장소 Push | 7절 | 미확인 |
+| 트러블슈팅 2건 이상 | 9절 | 확인 |
 
 ---
 
-**제출 전 확인:** 실제 명령 출력과 스크린샷을 추가하고, 깨진 증빙 링크가 없는지 확인한 다음, 완료 항목만 체크하여 GitHub에 Push합니다.
+**제출 전:** 누락 항목의 실제 명령·출력·증빙을 보완하고, 모든 링크가 GitHub에서 열리는지 확인한다. 인증 코드·토큰·비밀번호·개인키는 공개하지 않는다.
