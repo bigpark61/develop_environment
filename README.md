@@ -3,7 +3,7 @@
 > **미션:** Linux CLI · 파일 권한 · Docker · Dockerfile · 포트 매핑 · Bind Mount · Docker Volume · Git/GitHub를 이용한 재현 가능한 개발 워크스테이션 구축  
 > **수행 기간:** 2026년 11월 (제공 로그 기준)  
 > **제출 저장소:** https://github.com/bigpark61/develop_environment  
-> **문서 상태:** 제공된 로그·캡처를 반영한 중간 검증본. 미확인 항목은 완료로 표시하지 않음.
+> **문서 상태:** 2026-11-23 신규 실습 및 캡처 반영. GitHub 최종 Push와 일부 추가 증빙은 확인 전.
 
 ## 1. 개발 환경 구성
 
@@ -20,11 +20,11 @@
 | 호스트 OS | Windows 11 Home 25H2, 빌드 26200.9711 | PC 및 Docker Desktop 운영 |
 | Linux | WSL2 기반 Ubuntu 26.04.1 LTS, Bash | CLI·Git·Docker 명령 실행 |
 | Docker | CLI/Server 29.9.2, Docker Desktop 4.98.0 | 이미지 및 컨테이너 관리 |
-| Git | Ubuntu 2.53.0 (Windows 2.52.0.windows.1) | 로컬 버전 관리 |
+| Git | 기존 기록: Ubuntu 2.53.0 (Windows 2.52.0.windows.1); 신규 PC Git 버전 별도 확인 필요 | 로컬 버전 관리 |
 | VSCode | 1.139.1 | WSL 개발 작업 |
 | Python (추가 실습) | 3.14.4 / pip 25.1.1 | 가상환경 실습 (미션 필수 아님) |
 
-> 참고: Windows CMD에서 실행한 초기 `docker info`는 엔진 연결에 실패했으나, 이후 Ubuntu에서 실행한 `docker info`는 `Server Version: 29.9.2`를 반환했다. 시점별 상태가 다르므로 초기 오류를 현재의 장애로 단정하지 않는다. `wsl --list --verbose` 출력은 별도 확인이 필요하다.
+> 참고: 기존 PC 로그에는 Docker 29.9.2 기록이 있으며, 이번 신규 PC 실습에서는 Docker 29.9.3으로 확인했다. `wsl --list --verbose`에서 Ubuntu `Running`, `VERSION 2`를 확인했다. 다른 PC의 환경 기록이 혼동되지 않도록 구분한다.
 
 ```bash
 # Ubuntu에서 실제 실행·확인한 명령
@@ -46,17 +46,19 @@ $ code --version
 ## 2. 필수 수행 체크리스트
 
 - [x] Linux CLI: 경로 확인, 생성, 목록, 복사, 이름변경, 삭제, 파일 내용 확인
-- [ ] 파일·디렉터리 **각각** 권한 변경 전후 비교 (파일 권한 결과만 일부 확인)
-- [x] Docker CLI/엔진 버전 및 연결 확인
-- [ ] Docker 운영 명령 전부 (`docker stats` 성공 출력 추가 필요)
-- [x] `hello-world` 실행 및 Ubuntu 컨테이너 진입
-- [ ] **직접 작성한 Dockerfile**로 커스텀 이미지 빌드·실행
-- [x] NGINX 기본 이미지 포트 매핑 및 브라우저 접속
-- [ ] Bind Mount: 호스트 파일 수정 전후 컨테이너 반영 비교
-- [ ] Docker Volume: 컨테이너 삭제 전후 데이터 유지 검증
-- [x] Git 사용자·기본 브랜치 설정, GitHub CLI 인증, VSCode WSL에서 저장소 열기
-- [ ] 과제 제출 저장소 `develop_environment`에 최신 결과 Push 확인
-- [x] 실제 트러블슈팅 사례 2건 이상 기록 (해결·재검증 여부 구분)
+- [x] 파일·디렉터리 권한 변경 전후 비교 (`chmod 600 test.txt`, `chmod 700 sample_dir`)
+- [x] Docker CLI/엔진 버전 및 연결 확인 (`29.9.3`, ServerVersion 출력)
+- [x] Docker 운영 명령 실행 (`docker images`, `docker ps -a`, `docker logs`, `docker stats --no-stream`)
+- [x] `hello-world` 실행 및 Ubuntu 컨테이너 내부 `pwd`, `ls`, `echo` 실행
+- [x] 직접 작성한 `Dockerfile`로 `codyssey-web:1.0` 이미지 빌드 및 실행
+- [x] 포트 매핑 및 Windows 브라우저 `localhost:8083` 접속
+- [x] Bind Mount: 호스트 HTML 수정 즉시 `localhost:8084`에 반영
+- [x] Docker Volume: `volume-test` 삭제 후 새 컨테이너에서 기존 파일 읽기
+- [x] GitHub 저장소 복제 및 원격 `origin` 연결 확인, 기존 Git/VSCode 연동 증빙
+- [ ] 신규 파일 및 README를 `develop_environment`에 commit/push 후 GitHub 원격 확인
+- [x] 트러블슈팅 실제 사례 2건 이상 기록
+
+> 체크표시 `[x]`는 실제 로그 또는 스크린샷으로 확인된 수행 항목이며, GitHub 원격 업로드는 로컬에서 아직 수행하지 않았다.
 
 ## 3. Linux CLI 실습 기록
 
@@ -85,7 +87,7 @@ $ rm result.txt
 - **숨김 파일:** `ls -la`로 확인한다.
 - **권한:** `r` 읽기(4), `w` 쓰기(2), `x` 실행/디렉터리 진입(1). `755`는 소유자 `rwx`, 그룹·기타 `r-x`; `644`는 소유자 `rw-`, 그룹·기타 `r--`이다.
 
-실제 로그에서 `test.txt`의 초기 권한 `-rw-r--r--`와 후속 권한 `-rwxr-xr-x`가 확인된다. **변경에 사용한 `chmod` 명령 및 디렉터리 권한 변경 전후는 제출 자료에서 확인되지 않아 보완이 필요하다.**
+실제 로그에서 `test.txt`의 초기 권한 `-rw-r--r--`와 후속 권한 `-rwxr-xr-x`가 확인된다. 이번 신규 실습에서 `chmod 600 test.txt`, `chmod 700 sample_dir`로 파일과 디렉터리 변경 전후를 검증했다. 자세한 내용은 6.5절을 참조한다.
 
 [CLI 및 환경 점검 원본 로그](evidence/Logs_01.md)
 
@@ -122,7 +124,7 @@ $ docker ps -a
 # 종료된 hello-world 및 ubuntu-test 컨테이너 목록 확인
 ```
 
-`docker logs`와 `docker stats --no-stream`의 **정상 실행 출력은 추가 증빙 필요**.
+신규 실습에서 `docker logs --tail 20 codyssey-web` 및 `docker stats --no-stream` 출력까지 확인했다. 자세한 내용은 6.6절을 참조한다.
 
 ![Docker hello-world와 NGINX 실행](evidence/docker-hello-nginx.png)
 
@@ -143,52 +145,158 @@ $ docker run -d -p 8080:80 --name my-web nginx
 
 **원리:** `-p 8080:80`은 호스트의 8080 포트를 컨테이너 내부 NGINX의 80 포트에 연결한다.
 
-**중요한 구분:** 위 증거는 **기존 `nginx` 이미지의 실행·포트 매핑 성공**을 입증한다. `Dockerfile`을 직접 작성하고 `docker build`로 커스텀 이미지를 제작했다는 증거는 아니다. 또한 HTML 파일 생성은 확인되지만 Bind Mount로 연결했다는 실행 명령은 확인되지 않았다.
+**기존 기록과 신규 실습 구분:** 이 절의 8080/8081 캡처는 기본 NGINX 이미지의 접속 증빙이다. 별도로 신규 실습에서 Dockerfile 커스텀 이미지와 Bind Mount를 성공적으로 검증했으며 해당 증거는 6.2~6.3절에 있다.
 
-## 6. Dockerfile · Docker Image · Docker Container 개념과 검증 계획
+## 6. Dockerfile · 이미지 · 컨테이너 / Bind Mount / Volume 실제 검증
 
-### 6.1 세 개념의 차이
+### 6.1 기본 개념
 
-| 구분 | 정의 | 이번 미션의 예시 |
+| 구분 | 의미 | 실제 파일 또는 실행 결과 |
 |---|---|---|
-| **Dockerfile** | Docker 이미지를 어떤 순서와 설정으로 만들지 기록한 **텍스트 기반 제작 지시서** | `FROM nginx:alpine`, `COPY site/ ...`, `EXPOSE 80` |
-| **Docker Image** | 프로그램·라이브러리·설정·파일 등 실행에 필요한 내용을 묶은 **읽기 전용 실행 패키지** | `codyssey-web:1.0` (빌드 예정) |
-| **Docker Container** | 이미지를 바탕으로 생성되어 실행되는 **격리된 실행 인스턴스** | `codyssey-web` 컨테이너 (실행 예정) |
+| Dockerfile | 이미지를 만드는 제작 지시서 | [`Dockerfile`](Dockerfile) |
+| Docker Image | 프로그램 및 실행 파일을 포함한 패키지 | `codyssey-web:1.0` |
+| Docker Container | 이미지 기반으로 실행되는 인스턴스 | `codyssey-web` (`8083:80`) |
+| Bind Mount | 호스트의 디렉터리를 컨테이너에서 직접 참조 | `codyssey-bind` (`8084:80`) |
+| Docker Volume | Docker가 관리하는 컨테이너 외부 데이터 저장 공간 | `codyssey-data` |
 
-**핵심 흐름:** `Dockerfile` — `docker build` → `Docker Image` — `docker run` → `Docker Container`.
+**Dockerfile → `docker build` → 이미지 → `docker run` → 컨테이너** 순서로 생성한다.
 
-Dockerfile은 이미지 그 자체가 아니며, 이미지는 JPG/PNG와 같은 그림 파일이 아니다. 하나의 이미지로 여러 컨테이너를 만들 수 있고, 컨테이너에서 변경한 데이터는 별도 볼륨이나 바인드 마운트로 관리하지 않으면 컨테이너 삭제 시 사라질 수 있다.
+### 6.2 Dockerfile 작성 및 커스텀 이미지 빌드 — 성공
 
-### 6.2 Dockerfile 예제 (실습 예정, 실행 증거 아님)
+프로젝트 파일: [`Dockerfile`](Dockerfile), [`site/index.html`](site/index.html)
 
 ```dockerfile
 FROM nginx:alpine
+LABEL org.opencontainers.image.title="codyssey-web"
 COPY site/ /usr/share/nginx/html/
 EXPOSE 80
 ```
 
-- `FROM`: NGINX가 포함된 베이스 이미지 지정
-- `COPY`: 호스트의 `site/` 내용을 이미지의 웹 문서 경로로 복사
-- `EXPOSE`: 컨테이너의 80번 포트 사용을 문서화하며, 호스트 포트 공개는 `docker run -p`에서 별도 설정
+- 베이스 이미지: `nginx:alpine` — 경량 NGINX 웹 서버 사용
+- 커스텀 포인트: `COPY site/ /usr/share/nginx/html/` — 직접 작성한 HTML을 이미지에 포함
+- `EXPOSE 80` — 컨테이너 내부에서 사용하는 포트를 명시(외부 공개는 `-p`로 별도 지정)
 
 ```bash
-# 아래는 실행 예정 명령이며, 아직 성공 여부가 검증되지 않음
+cd ~/codyssey/dockerfile-web
 docker build -t codyssey-web:1.0 .
+# [+] Building 5.1s (8/8) FINISHED
+# naming to docker.io/library/codyssey-web:1.0
+
 docker run -d --name codyssey-web -p 8083:80 codyssey-web:1.0
 curl http://localhost:8083
 ```
 
-### 6.3 Bind Mount · Volume 검증 기준
+Windows 브라우저에서 `http://localhost:8083` 접속 시 `Codyssey Docker Mission E1-1`, `Custom Docker Image Test` 출력 확인.
 
-이 절은 실제 완료 사실이 아니라 **다음 수행 단계의 검증 기준**이다.
+![Dockerfile 이미지 빌드 성공](evidence/dockerfile-build.png)
+![커스텀 웹 서버 8083 접속 성공](evidence/dockerfile-web-8083.png)
 
-| 항목 | 확인할 내용 | 현재 상태 |
-|---|---|---|
-| Dockerfile | 베이스 이미지 선택, 커스텀 파일 복사, `docker build` 성공 로그 | 미확인 |
-| Bind Mount | `-v 호스트경로:컨테이너경로` 연결 후 호스트 파일 수정 전/후 `curl` 비교 | 미확인 |
-| Docker Volume | 볼륨 생성·쓰기 → 컨테이너 삭제 → 새 컨테이너에서 파일 읽기 | 미확인 |
+### 6.3 Bind Mount — 호스트 파일 변경 반영 성공
 
-완료 후 이 절에 실제 실행 명령·출력·스크린샷을 추가한다. 예상 결과를 실제 수행 결과처럼 기재하지 않는다.
+```bash
+cd ~/codyssey/dockerfile-web
+docker run -d --name codyssey-bind -p 8084:80 \
+  -v "$(pwd)/site:/usr/share/nginx/html:ro" nginx:alpine
+
+# site/index.html <h2> 내용을 아래와 같이 변경
+# 기존: Custom Docker Image Test
+# 변경: Bind Mount Update Success!
+
+curl -s http://localhost:8084 | grep '<h2>'
+# <h2>Bind Mount Update Success!</h2>
+curl -s http://localhost:8083 | grep '<h2>'
+# <h2>Custom Docker Image Test</h2>
+```
+
+- `8084`는 바인드 마운트에 연결된 현재 호스트 파일을 읽어 **수정된 문구**를 표시했다.
+- `8083`은 이미지 빌드 당시 HTML을 유지해 **원래 문구**를 표시했다.
+- 이미지 재빌드와 컨테이너 재시작 없이 변경 사항이 반영되는 것을 확인했다.
+
+![Bind Mount 변경 전후 검증](evidence/bind-mount-verification.png)
+
+### 6.4 Docker Volume — 컨테이너 삭제 후 데이터 유지 성공
+
+```bash
+docker volume create codyssey-data
+# codyssey-data
+docker volume inspect codyssey-data
+# Driver: local, Name: codyssey-data
+
+docker run -it --name volume-test -v codyssey-data:/data ubuntu bash
+# 컨테이너 내부
+echo "Docker Volume Persistence Test" > /data/test.txt
+cat /data/test.txt
+# Docker Volume Persistence Test
+exit
+
+# WSL Ubuntu에서 기존 컨테이너 삭제
+docker rm volume-test
+# volume-test
+
+# 동일 볼륨을 새 컨테이너에 연결해서 읽기
+docker run --rm --name volume-test2 -v codyssey-data:/data \
+  ubuntu cat /data/test.txt
+# Docker Volume Persistence Test
+
+docker volume ls
+# local codyssey-data
+```
+
+**결론:** 기존 `volume-test` 컨테이너를 삭제한 뒤 새 `volume-test2` 컨테이너에서 동일한 문자열을 읽었고, `codyssey-data` 볼륨도 유지되었다. 볼륨 자체를 삭제하면 데이터도 사라질 수 있다.
+
+![Docker Volume 영속성 검증](evidence/docker-volume-persistence.png)
+
+### 6.5 Linux 파일·디렉터리 권한 변경 — 성공
+
+위치: `~/codyssey/permission-practice` (로컬 실습 경로)
+
+```bash
+mkdir -p ~/codyssey/permission-practice/sample_dir
+cd ~/codyssey/permission-practice
+echo "Linux Permission Test" > test.txt
+ls -l test.txt
+# -rw-r--r-- ... test.txt
+ls -ld sample_dir
+# drwxr-xr-x ... sample_dir
+chmod 600 test.txt
+chmod 700 sample_dir
+ls -l test.txt
+# -rw------- ... test.txt
+ls -ld sample_dir
+# drwx------ ... sample_dir
+```
+
+| 대상 | 변경 전 | 변경 후 | 의미 |
+|---|---|---|---|
+| `test.txt` | `644` (`rw-r--r--`) | `600` (`rw-------`) | 소유자만 읽기·쓰기 |
+| `sample_dir` | `755` (`rwxr-xr-x`) | `700` (`rwx------`) | 소유자만 접근·진입 |
+
+![Linux 권한 변경 전후](evidence/linux-permission-change.png)
+
+### 6.6 Docker 이미지·컨테이너·로그·자원 사용량 — 성공
+
+```bash
+docker images
+# codyssey-web:1.0, hello-world:latest, nginx:alpine, ubuntu:latest
+
+docker ps -a
+# codyssey-web: Up, 8083->80/tcp
+# codyssey-bind: Up, 8084->80/tcp
+# ubuntu-lab: Exited (137)
+# hello-world: Exited (0)
+
+docker logs --tail 20 codyssey-web
+# GET / HTTP/1.1 200
+# GET /favicon.ico HTTP/1.1 404 (아이콘 파일 미존재)
+
+docker stats --no-stream
+# codyssey-bind: CPU 0.00%, MEM 18.42MiB
+# codyssey-web:  CPU 0.00%, MEM 18.48MiB
+```
+
+`favicon.ico`의 404는 브라우저의 아이콘 요청에 대한 응답이며 홈페이지 자체는 HTTP 200으로 정상 제공되었다. `Exited (137)`은 강제 종료 신호(SIGKILL)로 종료되었음을 뜻하며 원인은 화면만으로 확정하지 않는다.
+
+![Docker 운영 로그 최종 검증](evidence/docker-operations-final.png)
 
 ## 7. Git · GitHub · VSCode 연동
 
@@ -265,42 +373,52 @@ All checks passed!
 
 ## 10. 증빙 자료 인덱스
 
-| 항목 | 증빙 |
+| 수행 항목 | 증빙 파일 |
 |---|---|
-| 환경 구조 | [워크플로](evidence/environment-workflow.png) · [구성도](evidence/environment-architecture.png) |
-| Windows/WSL/Docker 설정 | [WSL 통합](evidence/docker-wsl-integration.png) |
-| CLI·버전·컨테이너 로그 | [Logs_01.md](evidence/Logs_01.md) |
-| Python·VSCode 실습 | [Logs_02.md](evidence/Logs_02.md) |
-| Docker 실행 | [hello-world/NGINX](evidence/docker-hello-nginx.png) |
-| 포트 매핑 | [8080](evidence/nginx-8080.png) · [8081](evidence/nginx-8081-ubuntu.png) |
-| Git/GitHub | [설정/clone](evidence/git-config-clone.png) · [VSCode](evidence/vscode-wsl-repository.png) |
-| 오류 대응 | [컨테이너 이름 충돌](evidence/docker-name-conflict.png) |
+| 개발 환경 및 개념 | [환경 구성도](evidence/environment-workflow-docker-concepts.png) · [기존 워크플로](evidence/environment-workflow.png) |
+| WSL / Docker 연동 | [WSL Integration](evidence/docker-wsl-integration.png) |
+| 터미널 및 설치 로그 | [Logs_01.md](evidence/Logs_01.md) · [Logs_02.md](evidence/Logs_02.md) |
+| hello-world / NGINX 기존 실행 | [Docker 시작](evidence/docker-hello-nginx.png) · [8080](evidence/nginx-8080.png) · [8081](evidence/nginx-8081-ubuntu.png) |
+| Dockerfile 빌드 | [dockerfile-build.png](evidence/dockerfile-build.png) |
+| 커스텀 웹 페이지 접속 | [dockerfile-web-8083.png](evidence/dockerfile-web-8083.png) |
+| Bind Mount 변경 비교 | [bind-mount-verification.png](evidence/bind-mount-verification.png) |
+| Docker Volume 영속성 | [docker-volume-persistence.png](evidence/docker-volume-persistence.png) |
+| Linux 권한 변경 | [linux-permission-change.png](evidence/linux-permission-change.png) |
+| Docker 운영 명령 | [docker-operations-final.png](evidence/docker-operations-final.png) |
+| Git / VSCode | [Git 설정·복제](evidence/git-config-clone.png) · [VSCode WSL](evidence/vscode-wsl-repository.png) |
+| 트러블슈팅 | [컨테이너 중복 이름](evidence/docker-name-conflict.png) · README 9절 |
 
-## 11. 학습 결과 및 다음 보완 작업
-
-- **Linux CLI:** 현재 위치·경로·파일·권한을 다루는 기본 원리 학습.
-- **Docker:** 이미지(실행 원본)와 컨테이너(실행 인스턴스)를 구분하고 엔진 상태 확인.
-- **포트 매핑:** 호스트 8080/8081과 컨테이너 80의 연결을 브라우저로 검증.
-- **Git/GitHub:** 로컬 버전 관리와 원격 저장소 인증·복제·VSCode 연동 확인.
-- **우선 보완:** 파일·디렉터리 권한 변경, Dockerfile 빌드, Bind Mount, Volume, Docker 운영 로그, 제출 저장소 Push 증빙.
-
-### 최종 요구사항 검증표
+## 11. 최종 요구사항 검증 및 제출 상태
 
 | 과제 요구사항 | 구현·증빙 위치 | 상태 |
 |---|---|---|
-| 개발 환경 및 버전 | 1절 / Logs_01 | 확인 |
-| CLI 조작 | 3절 / Logs_01 | 확인 |
-| 권한 변경 전후 | 3절 | 추가 검증 필요 |
-| Docker 엔진·기본 컨테이너 | 4절 / 캡처 | 확인 |
-| Docker 운영 로그 전체 | 4절 | 일부 미확인 |
-| 커스텀 Dockerfile | 6절 | 미확인 |
-| 포트 매핑 | 5절 / 캡처 | 확인 |
-| Bind Mount | 6절 | 미확인 |
-| Volume 영속성 | 6절 | 미확인 |
-| GitHub/VSCode 연동 | 7절 / 캡처 | 확인 |
-| 제출 저장소 Push | 7절 | 미확인 |
+| OS/WSL/셸/Docker 정보 | 1절, 기존 로그 및 신규 실행 기록 | 확인 |
+| Linux CLI 파일 조작 | 3절, Logs_01 | 확인 |
+| 파일·디렉터리 권한 변경 | 6.5절, 권한 캡처 | 확인 |
+| Docker 설치·엔진 | 1·4절, 신규 `ServerVersion 29.9.3` | 확인 |
+| Docker `images`, `ps`, `logs`, `stats` | 6.6절, 운영 캡처 | 확인 |
+| hello-world 및 Ubuntu 내부 실습 | 4절, 신규 실행 캡처 | 확인 |
+| Dockerfile 커스텀 이미지 빌드/실행 | 6.2절, Dockerfile, HTML, 빌드·웹 캡처 | 확인 |
+| 포트 매핑 접속 | 5·6.2절, 8083 캡처 | 확인 |
+| Bind Mount 변경 반영 | 6.3절, 비교 캡처 | 확인 |
+| Docker Volume 영속성 | 6.4절, 데이터 유지 캡처 | 확인 |
+| Git 설정·GitHub/VSCode 연동 | 7절, 기존 캡처 및 신규 clone | 확인 |
 | 트러블슈팅 2건 이상 | 9절 | 확인 |
+| 신규 README·소스·증빙 GitHub commit/push | 아직 `git status`에서 Untracked, 원격 미반영 | **미완료** |
 
----
+### 제출 직전 실행 및 확인
 
-**제출 전:** 누락 항목의 실제 명령·출력·증빙을 보완하고, 모든 링크가 GitHub에서 열리는지 확인한다. 인증 코드·토큰·비밀번호·개인키는 공개하지 않는다.
+```bash
+cd ~/codyssey/develop_environment
+# 원격 연결 확인
+git remote -v
+# 백업 파일은 로컬에 보관하고 Git에 추가하지 않음
+git status --short
+# 필요한 파일만 스테이징
+git add README.md Dockerfile site/index.html evidence/*.png
+# 실제 GitHub 반영은 이어지는 단계에서 진행
+git commit -m "docs: complete E1-1 Docker and Linux verification evidence"
+git push origin main
+```
+
+**보안 주의:** README와 이미지에 토큰, 비밀번호, 인증 코드 및 개인키를 포함하지 않는다. 호스트 경로는 예시와 다를 수 있다. `README.backup.md`는 GitHub에 업로드하지 않고 로컬 백업으로만 유지한다.
